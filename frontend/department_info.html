@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>部门信息管理</title>
+    <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        create_api = 'http://localhost:5000/api/department/create';
+        delete_api = 'http://localhost:5000/api/department/delete_by_id';
+        findall_api = 'http://localhost:5000/api/department/findall';
+        update_api = 'http://localhost:5000/api/department/update_by_id';
+
+        $(document).ready(function () {
+            $("#create_button").click(function (message) {
+                let name = $("#name").val();
+                let request_data = {
+                    'name': name,
+                };
+                if (name !== '') {
+                    $.ajax({
+                        type: "POST",
+                        url: create_api,
+                        data: JSON.stringify(request_data),
+                        success: function (result) {
+                            alert(result);
+                        },
+                        error: function (e) {
+                            alert('error');
+                        }
+                    });
+                } else {
+                    alert('请填写新部门的名称')
+                }
+            });
+
+            $("#update_button").click(function (message) {
+                let id = $("#id").val();
+                let name = $("#name").val();
+                let request_data = {
+                    'id': id,
+                    'name': name,
+                };
+                if (name !== '' && id !== '') {
+                    $.ajax({
+                        type: "POST",
+                        url: update_api,
+                        data: JSON.stringify(request_data),
+                        success: function (result) {
+                            alert(result);
+                        },
+                        error: function (e) {
+                            alert('error');
+                        }
+                    });
+                } else {
+                    alert('请指定要更新的部门id以及新的名称')
+                }
+            });
+
+            $("#findall_button").click(function (message) {
+                $.ajax({
+                        type: "POST",
+                        url: findall_api,
+                        success: function (result) {
+                            if (result.length !== 0) {
+                                $('#notification').text('❗以下是表中所有部门的信息👇');
+                                let output = '<table id="customers"><tr><th>id</th><th>部门名称</th><th>人数</th>';
+                                for (let i = 0; i < result.length; i++) {
+                                    output += '<tr>';
+                                    for (let j = 0; j < result[i].length; j++) {
+                                        output += '<td>' + result[i][j] + '</td>';
+                                    }
+                                    output += '</tr>';
+                                }
+                                output += '</table>';
+                                $('#content').html(output);
+                            } else {
+                                let output = '';
+                                $('#content').html(output);
+                                $('#notification').text('❗未查找到任何部门');
+                            }
+                        },
+                        error: function (e) {
+                            alert('error');
+                        }
+                    }
+                );
+            });
+
+            $("#delete_button").click(function (message) {
+                let id = $("#id").val();
+                let request_data = {
+                    'id': id,
+                };
+                if (id !== '') {
+                    $.ajax({
+                        type: "POST",
+                        url: delete_api,
+                        data: JSON.stringify(request_data),
+                        success: function (result) {
+                            alert(result);
+                        },
+                        error: function (e) {
+                            alert('error');
+                        }
+                    });
+                } else {
+                    alert('请填写想要删除的部门id')
+                }
+            });
+
+        })
+    </script>
+</head>
+<style>
+    #header {
+    background-color: #EAF2D3;
+        background-color: rgb(0,0,0,0.3);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+    button {
+	width: 240px;
+	height: 40px;
+	border-width: 0px;
+	border-radius: 3px;
+	background: #cccccc;
+	cursor: pointer;
+	outline: none;
+	font-family: Microsoft YaHei;
+	color: white;
+	font-size: 14px;
+        font-weight:bold;
+}
+button:hover {
+	background: indianred;
+}
+    input{
+                border: 1px solid #ccc;
+                padding: 7px 0px;
+                border-radius: 3px;
+                padding-left:5px;
+                -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+                box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+                -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+                -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+                transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s
+    }
+    input:focus{
+                    border-color: #66afe9;
+                    outline: 0;
+                    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6);
+                    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgba(102,175,233,.6)
+            }
+    #customers
+  {
+  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  width:100%;
+  border-collapse:collapse;
+  }
+
+#customers td, #customers th
+  {
+  font-size:1em;
+  border:1px solid indianred;
+  padding:3px 7px 2px 7px;
+  }
+
+#customers th
+  {
+  font-size:1.1em;
+  text-align:left;
+  padding-top:5px;
+  padding-bottom:4px;
+  background-color: brown;
+  color:#ffffff;
+  }
+
+#customers tr.alt td
+  {
+  color:#000000;
+  background-color:#EAF2D3;
+  }
+</style>
+<body bgcolor="#f0f8ff">
+<div>
+<h1 id="header">部门信息管理</h1>
+</div>
+<button onclick="window.location.href='/index.html'">返回主页面</button>
+
+<div>
+    <div class="container">
+        <h3>请填写下表:</h3>
+        <form action="#" id="adv-search-form" class="clearfix">
+            <fieldset>
+                数据id:　<input type="text" id="id" placeholder="数据id（创建新部门时无需填写）" size="50"><br><br>
+                部门名称:　<input type="text" id="name" placeholder="部门名称" size="50"><br>
+            </fieldset>
+            <br>
+            <button id="create_button">创建新部门</button>
+            <button id="delete_button">根据数据id删除部门</button>
+            <button id="update_button">根据数据id更新部门名称</button>
+            <button id="findall_button">获取所有部门信息</button>
+        </form>
+    </div>
+</div>
+
+<p id="notification"></p>
+<dev id="content"></dev>
+
+</body>
+</html>
